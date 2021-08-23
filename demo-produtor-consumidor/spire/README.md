@@ -1,0 +1,43 @@
+# Implantação do SPIRE
+
+Implantar servidor SPIRE:
+
+```bash
+kubectl apply -f spire-namespace.yaml
+kubectl apply -f spire-bundle-configmap.yaml
+kubectl apply -f server-account.yaml
+kubectl apply -f server-cluster-role.yaml
+kubectl apply -f server-configmap.yaml
+kubectl apply -f server-service.yaml
+kubectl apply -f server-statefulset.yaml
+```
+
+Apagar servidor SPIRE:
+
+```bash
+kubectl delete -f server-account.yaml
+kubectl delete -f server-cluster-role.yaml
+kubectl delete -f server-configmap.yaml
+kubectl delete -f server-service.yaml
+kubectl delete -f server-statefulset.yaml
+kubectl delete -f spire-bundle-configmap.yaml
+kubectl delete -f spire-namespace.yaml
+```
+
+Implantar agente SPIRE:
+
+```bash
+kubectl apply -f agent-account.yaml
+kubectl apply -f agent-cluster-role.yaml
+kubectl apply -f agent-configmap.yaml
+kubectl apply -f agent-daemonset.yaml
+```
+
+Apagar agente SPIRE:
+
+```bash
+kubectl delete -f agent-account.yaml
+kubectl delete -f agent-cluster-role.yaml
+kubectl delete -f agent-configmap.yaml
+kubectl delete -f agent-daemonset.yaml
+```

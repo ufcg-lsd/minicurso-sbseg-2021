@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: produtor-kafka
+  labels:
+    app: produtor-kafka
+spec:
+  selector:
+    matchLabels:
+      app: produtor-kafka
+  template:
+    metadata:
+      labels:
+        app: produtor-kafka
+    spec:
+      hostPID: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: produtor-kafka
+          image: silvamatteus/produtor-kafka:latest
+          imagePullPolicy: Never
+          env:
+            - name: WORKLOAD_API_SOCK_PATH
+              value: unix:///run/spire/sockets/agent.sock
+            - name: SPIFFE_TRUST_DOMAIN
+              value: lsd.ufcg.edu.br
+            - name: KAFKA_ID
+              value: kafka
+            - name: BROKER_ADDR
+              value: "kafka:9092"
+            - name: TOPIC
+              value: test
+          volumeMounts:
+            - name: spire-agent-socket
+              mountPath: /run/spire/sockets
+              readOnly: true
+      hostAliases:
+        - ip: "10.30.1.37"
+          hostnames:
+            - "kafka"
+      volumes:
+        - name: spire-agent-socket
+          hostPath:
+            path: /run/spire/sockets
+            type: Directory

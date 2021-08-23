@@ -1,0 +1,49 @@
+version: "3.1"
+services:
+    kafka-zookeeper:
+        image: zookeeper
+        container_name: kafka-zookeeper
+        restart: unless-stopped
+        networks:
+            - proxynet
+        dns:
+            - 8.8.8.8
+        dns_search:
+            - lsd.ufcg.edu.br
+        ports:
+            - "2181:2181"
+
+    kafka-broker:
+        image: kafka:spiffe-helper
+        container_name: kafka-broker
+        working_dir: /
+        # entrypoint: ["/entrypoint/start.sh"]
+        # entrypoint: ["/bin/bash", "-c", "tail -f /dev/null & wait"]
+        environment:
+            AGENT_SOCKET: '/sockets/agent.sock'
+        healthcheck:
+            test: ["CMD", "openssl", "x509", "-checkend", "1" , "-enddate",
+                   "-noout", "-in", "/store/kafka-server-cert.pem"]
+            interval: "3min"
+            timeout: "20s"
+            start_period: "40s"
+            retries: "0"
+        volumes:
+            - "/tmp/spire/:/sockets/"
+            - "./config-broker:/config"
+        networks:
+            - proxynet
+        depends_on:
+            - kafka-zookeeper
+        dns:
+            - 8.8.8.8
+        # dns_search:
+        #     - lsd.ufcg.edu.br
+        ports:
+            - "9092:9092"
+        extra_hosts:
+            - "kafka:172.17.0.1"
+
+networks:
+  proxynet:
+    name: kafka_network
