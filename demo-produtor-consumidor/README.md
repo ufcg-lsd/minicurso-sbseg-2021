@@ -1,11 +1,116 @@
 # Demo produtor-consumidor
 
+## Passos
+
+- Cadastra identidade do produtor
+- Cria sessão do consumidor
+- Cadastra identidade do consumidor
+- Implanta produtor
+- Implanta consumidor
+
+## Reproduza você mesmo
+
+Implantar servidor SPIRE:
+
 ```bash
-# Criar entrada para o produtor
-export AGENTE_ID=spiffe://lsd.ufcg.edu.br/spire/agent/k8s_sat/kubernetes/99c16af7-092e-4cfd-8013-0764d9de8663
+kubectl apply -f spire-namespace.yaml
+kubectl apply -f spire-bundle-configmap.yaml
+kubectl apply -f server-account.yaml
+kubectl apply -f server-cluster-role.yaml
+kubectl apply -f server-configmap.yaml
+kubectl apply -f server-service.yaml
+kubectl apply -f server-statefulset.yaml
+```
+
+Implantar agente SPIRE:
+
+```bash
+kubectl apply -f agent-account.yaml
+kubectl apply -f agent-cluster-role.yaml
+kubectl apply -f agent-configmap.yaml
+kubectl apply -f agent-daemonset.yaml
+```
+
+
+Agente SPIRE local:
+
+```bash
+git clone https://github.com/ufcg-lsd/spire -b scone_svid_store_plugin
+cd spire
+go build ./cmd/spire-agent
+```
+
+
+Criando joinToken para o Agente local e uma identidade para o kafka.
+
+```bash
+kubectl exec -it -n spire spire-server sh
+# Dentro do container
+
+bin/spire-server token generate -spiffeID spiffe://lsd.ufcg.edu.br/agente-kafka
+# Copie o token para usá-lo no próximo passo
+bin/spire-server entry create -parentID spiffe://lsd.ufcg.edu.br/agente-kafka -spiffeID spiffe://lsd.ufcg.edu.br/kafka -selector unix:user:root -dns kafka
+```
+
+
+Executar o Agente local.
+
+```bash
+export TOKEN=
+./spire-agent run -joinToken $TOKEN  -config agent.conf
+```
+
+
+Executar o kafka.
+
+```bash
+cd kafka
+docker-compose up
+```
+
+
+Registrar o produtor.
+
+```bash
+# Entre no container do spire-server e execute
+# bin/spire-server agent list
+# Copie o spiffeID do Agente com a identidade relacionada ao k8s_sat e cole na linha abaixo
+export AGENTE_ID=
 bin/spire-server entry create \
     -parentID $AGENTE_ID \
     -spiffeID spiffe://lsd.ufcg.edu.br/produtor \
     -selector k8s:container-name:produtor-kafka \
     -selector k8s:ns:default
+```
+
+
+Criar uma sessão SCONE para o consumidor e registrar uma entrada SPIRE para o consumidor.
+
+```bash
+# Use um container SCONE CLI para atestar o cas e postar a sessão em ./consumidor/scone-session.yaml
+# Registrar entrada SPIRE
+export SESSION_HASH=a91ed304958530306f0cab3a2977cbd84e139352ed3cd2002b6145ee4c4d722f
+export SESSION_NAME=svid-session
+# Use o mesmo AGENTE_ID usado para registrar o produtor
+export AGENTE_ID=
+
+./bin/spire-server entry create -parentID $AGENTE_ID \
+        -spiffeID spiffe://lsd.ufcg.edu.br/consumidor \
+        -selector svidstore:type:scone_cas_secretsmanager \
+        -selector cas_session_hash:$SESSION_HASH \
+        -selector cas_session_name:$SESSION_NAME
+```
+
+
+Implantação do produtor e do consumidor.
+
+```bash
+kubectl apply -f produtor/deployment.yaml
+kubectl apply -f consumidor/deployment.yaml
+```
+
+Liberar recursos.
+
+```bash
+minikube delete
 ```
