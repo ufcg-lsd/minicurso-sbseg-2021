@@ -1,41 +1,5 @@
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: spire-datadir
-  namespace: spire
-  labels:
-    type: local
-    app: spire-agent
-spec:
-  # storageClassName: manual
-  capacity:
-    storage: 2Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data"
-
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  namespace: spire
-  name: spire-datadir
-  labels:
-    app: spire-agent
-spec:
-  # storageClassName: manual
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
----
-
 apiVersion: apps/v1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: spire-agent
   namespace: spire
@@ -55,8 +19,7 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       serviceAccountName: spire-agent
-      imagePullSecrets:
-        - name: sconeapps
+      nodeName: k8s-sgx-worker-epc30-5
       initContainers:
         - name: init
           # This is a small image with wait-for-it, choose whatever image
@@ -93,4 +56,4 @@ spec:
             type: DirectoryOrCreate
         - name: run-spire-data
           persistentVolumeClaim:
-            claimName: spire-datadir
+            claimName: spire-agent-datadir

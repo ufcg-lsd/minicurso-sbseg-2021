@@ -72,10 +72,7 @@ docker-compose up
 Registrar o produtor.
 
 ```bash
-# Entre no container do spire-server e execute
-# bin/spire-server agent list
-# Copie o spiffeID do Agente com a identidade relacionada ao k8s_sat e cole na linha abaixo
-export AGENTE_ID=
+export AGENTE_ID=spiffe://lsd.ufcg.edu.br/agente-scone
 bin/spire-server entry create \
     -parentID $AGENTE_ID \
     -spiffeID spiffe://lsd.ufcg.edu.br/produtor \
@@ -91,8 +88,7 @@ Criar uma sessão SCONE para o consumidor e registrar uma entrada SPIRE para o c
 # Registrar entrada SPIRE
 export SESSION_HASH=a91ed304958530306f0cab3a2977cbd84e139352ed3cd2002b6145ee4c4d722f
 export SESSION_NAME=svid-session
-# Use o mesmo AGENTE_ID usado para registrar o produtor
-export AGENTE_ID=
+export AGENTE_ID=spiffe://lsd.ufcg.edu.br/agente-scone
 
 ./bin/spire-server entry create -parentID $AGENTE_ID \
         -spiffeID spiffe://lsd.ufcg.edu.br/consumidor \

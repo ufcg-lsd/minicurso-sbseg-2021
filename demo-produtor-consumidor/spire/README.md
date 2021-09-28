@@ -4,6 +4,7 @@ Implantar servidor SPIRE:
 
 ```bash
 kubectl apply -f spire-namespace.yaml
+kubectl apply -f server-pv-and-pvc.yaml
 kubectl apply -f spire-bundle-configmap.yaml
 kubectl apply -f server-account.yaml
 kubectl apply -f server-cluster-role.yaml
@@ -27,10 +28,11 @@ kubectl delete -f spire-namespace.yaml
 Implantar agente SPIRE:
 
 ```bash
+kubectl apply -f agent-pv-and-pvc.yaml
 kubectl apply -f agent-account.yaml
 kubectl apply -f agent-cluster-role.yaml
 kubectl apply -f agent-configmap.yaml
-kubectl apply -f agent-daemonset.yaml
+kubectl apply -f agent-deployment.yaml
 ```
 
 Apagar agente SPIRE:
