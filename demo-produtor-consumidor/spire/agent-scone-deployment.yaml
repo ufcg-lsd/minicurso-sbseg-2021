@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spire-agent
+  name: spire-agent-scone
   namespace: spire
   labels:
-    app: spire-agent
+    app: spire-agent-scone
 spec:
   selector:
     matchLabels:
-      app: spire-agent
+      app: spire-agent-scone
   template:
     metadata:
       namespace: spire
       labels:
-        app: spire-agent
+        app: spire-agent-scone
     spec:
       hostPID: true
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
-      serviceAccountName: spire-agent
+      serviceAccountName: spire-agent-scone
       nodeName: k8s-sgx-worker-epc30-5
       initContainers:
         - name: init
@@ -28,7 +28,7 @@ spec:
           image: gcr.io/spiffe-io/wait-for-it
           args: ["-t", "30", "spire-server:8081"]
       containers:
-        - name: spire-agent
+        - name: spire-agent-scone
           image: silvamatteus/spire-agent:storesvid-scone
           imagePullPolicy: IfNotPresent
           args: ["-config", "/run/spire/config/agent.conf"]
@@ -46,14 +46,10 @@ spec:
       volumes:
         - name: spire-config
           configMap:
-            name: spire-agent
+            name: spire-agent-scone
         - name: spire-bundle
           configMap:
             name: spire-bundle
-        - name: spire-agent-socket
-          hostPath:
-            path: /run/spire/sockets
-            type: DirectoryOrCreate
         - name: run-spire-data
           persistentVolumeClaim:
             claimName: spire-agent-datadir

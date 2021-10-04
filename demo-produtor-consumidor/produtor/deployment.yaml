@@ -36,7 +36,7 @@ spec:
               mountPath: /run/spire/sockets
               readOnly: true
       hostAliases:
-        - ip: "10.30.1.37"
+        - ip: "10.11.19.67"
           hostnames:
             - "kafka"
       volumes:

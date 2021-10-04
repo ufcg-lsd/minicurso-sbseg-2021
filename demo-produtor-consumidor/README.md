@@ -1,8 +1,38 @@
 # Demo produtor-consumidor
 
-## Passos
+## Demo coletiva
 
-- Cadastra identidade do produtor
+Nesse momento, você já deve ter recebido dados de acesso à máquina virtual com todas as ferramentas necessárias para excutar a demonstração.
+
+Faça login na máquina via SSH. Assumindo um sistema operacional UNIX, o seguinte comando deve fazer isso.
+
+```bash
+export USERNAME=<user> # substitua <user> pelo nome de usuário que você recebeu
+export CERTDIR=<cert-dir> # substitua <cert-dir> pelo caminho para o certificado que você recebeu
+ssh -i $CERTDIR $USERNAME@
+```
+
+TODO: completar comando ssh com o ip externo da VM e a porta definitiva.
+
+### Criar a identidade do produtor
+
+```bash
+kubectl exec -it -n spire $(kubectl get pods -n spire -o=jsonpath='{.items[0].metadata.name}' \
+    -l app=spire-server)  /bin/sh
+
+export USERNAME=<user> # substitua <user> pelo nome de usuário que você recebeu
+
+bin/spire-server entry create \
+    -parentID spiffe://lsd.ufcg.edu.br/agente-scone \
+    -selector k8s:ns:$USERNAME \
+    -selector k8s:container-name:produtor-kafka \
+    -spiffeID spiffe://lsd.ufcg.edu.br/produtor/$USERNAME
+exit
+```
+
+
+TODO:
+- (Em progresso) Cadastra identidade do produtor
 - Cria sessão do consumidor
 - Cadastra identidade do consumidor
 - Implanta produtor
@@ -14,6 +44,7 @@ Implantar servidor SPIRE:
 
 ```bash
 kubectl apply -f spire-namespace.yaml
+kubectl apply -f server-pv-and-pvc.yaml
 kubectl apply -f spire-bundle-configmap.yaml
 kubectl apply -f server-account.yaml
 kubectl apply -f server-cluster-role.yaml
@@ -27,8 +58,12 @@ Implantar agente SPIRE:
 ```bash
 kubectl apply -f agent-account.yaml
 kubectl apply -f agent-cluster-role.yaml
+# Agente regular.
 kubectl apply -f agent-configmap.yaml
 kubectl apply -f agent-daemonset.yaml
+# Agente com plugin SVIDStore SCONE
+kubectl apply -f agent-scone-configmap.yaml
+kubectl apply -f agent-scone-deployment.yaml
 ```
 
 
