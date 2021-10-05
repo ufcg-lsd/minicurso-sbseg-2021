@@ -43,3 +43,12 @@ kubectl delete -f agent-cluster-role.yaml
 kubectl delete -f agent-configmap.yaml
 kubectl delete -f agent-daemonset.yaml
 ```
+
+# Criar identidades para agentes
+
+```bash
+# Agente daemonset
+bin/spire-server entry create -spiffeID spiffe://lsd.ufcg.edu.br/agente-k8s -node -selector k8s_sat:agent_ns:spire k8s_sat:agent_sa:spire-agent
+
+bin/spire-server entry create -spiffeID spiffe://lsd.ufcg.edu.br/agente-scone -node -selector k8s_sat:agent_ns:spire k8s_sat:agent_sa:spire-agent-scone
+```

@@ -1,4 +1,4 @@
-name: svid-session
+name: $USERNAME/svid-session
 version: "0.3"
 
 services:
@@ -14,14 +14,14 @@ services:
       SVID_KEY: /certs/svid.key
       SPIFFE_CA: /certs/bundle.crt
       BROKER_ADDR: kafka:9092
-      TOPIC: test
+      TOPIC: $USERNAME
       GROUP_ID: "1"
       PYTHONUNBUFFERED: 1
  
 secrets:
   - name: svid
     import:
-      session: spire-svid-svid-session
+      session: $USERNAME/svid-session-plugin
       secret: svid
   - name: bundle
     import:

@@ -39,7 +39,7 @@ data:
 
       SVIDStore "scone_cas_secretsmanager" {
         plugin_data {
-          cas_address = "https://cas.default:8081"
+          cas_address = "https://5-4-0.scone-cas.cf:8081"
 
           cas_client_certificate = "/run/spire/config/session.crt"
           cas_client_key = "/run/spire/config/session.key"
@@ -141,7 +141,7 @@ data:
     iQcxpXHaATwJ8Ipd+gcUsr8SJ/9X
     -----END PRIVATE KEY-----
   svid_session_template.yaml: |
-    name: spire-svid-<\session-name-selector>
+    name: <\session-name-selector>-plugin
     version: "0.3"
     predecessor: <\predecessor>
     secrets:
@@ -169,6 +169,13 @@ data:
     name: spire-ca
     version: "0.3"
     predecessor: <\predecessor>
+    access_policy:
+      read:
+        - ANY
+      update:
+        - CREATOR
+      create_sessions:
+        - CREATOR
     secrets:
       - name: spire-ca
         kind: x509-ca

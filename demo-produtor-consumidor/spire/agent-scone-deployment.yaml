@@ -19,7 +19,7 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       serviceAccountName: spire-agent-scone
-      nodeName: k8s-sgx-worker-epc30-5
+      nodeName: node-1
       initContainers:
         - name: init
           # This is a small image with wait-for-it, choose whatever image
@@ -38,9 +38,6 @@ spec:
               readOnly: true
             - name: spire-bundle
               mountPath: /run/spire/bundle
-            - name: spire-agent-socket
-              mountPath: /run/spire/sockets
-              readOnly: false
             - name: run-spire-data
               mountPath: /run/spire/data
       volumes:

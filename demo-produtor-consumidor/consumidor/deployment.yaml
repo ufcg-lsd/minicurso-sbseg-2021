@@ -18,13 +18,13 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: consumidor-kafka
-          image: silvamatteus/consumidor-kafka:latest
-          imagePullPolicy: Never
+          image: silvamatteus/consumer-kafka:latest
+          imagePullPolicy: IfNotPresent
           env:
             - name: SCONE_CAS_ADDR
-              value: "cas.scone"
+              value: "5-4-0.scone-cas.cf"
             - name: SCONE_CONFIG_ID
-              value: svid-session/consumidor-kafka
+              value: $USERNAME/svid-session/consumidor-kafka
             - name: SCONE_LAS_ADDR
               valueFrom:
                 fieldRef:
@@ -33,6 +33,6 @@ spec:
             limits:
               sgx.k8s.io/sgx: 1
       hostAliases:
-        - ip: "10.11.19.67"
+        - ip: "10.11.19.213"
           hostnames:
             - "kafka"

@@ -30,7 +30,7 @@ spec:
           args: ["-t", "30", "spire-server:8081"]
       containers:
         - name: spire-agent
-          image: gcr.io/spiffe-io/spire-agent:0.11.0
+          image: gcr.io/spiffe-io/spire-agent:0.12.0
           imagePullPolicy: IfNotPresent
           args: ["-config", "/run/spire/config/agent.conf"]
           volumeMounts:
@@ -42,9 +42,6 @@ spec:
             - name: spire-agent-socket
               mountPath: /run/spire/sockets
               readOnly: false
-          resources:
-            limits:
-              sgx.k8s.io/sgx: 1
       volumes:
         - name: spire-config
           configMap:

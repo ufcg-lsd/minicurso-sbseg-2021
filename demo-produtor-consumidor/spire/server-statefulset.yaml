@@ -18,7 +18,7 @@ spec:
         app: spire-server
     spec:
       serviceAccountName: spire-server
-      nodeName: k8s-sgx-worker-epc30-5
+      nodeName: node-1
       containers:
         - name: spire-server
           image: gcr.io/spiffe-io/spire-server:0.12.0

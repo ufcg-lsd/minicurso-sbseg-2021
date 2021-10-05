@@ -19,7 +19,7 @@ spec:
       containers:
         - name: produtor-kafka
           image: silvamatteus/produtor-kafka:latest
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           env:
             - name: WORKLOAD_API_SOCK_PATH
               value: unix:///run/spire/sockets/agent.sock
@@ -30,13 +30,13 @@ spec:
             - name: BROKER_ADDR
               value: "kafka:9092"
             - name: TOPIC
-              value: test
+              value: $USERNAME
           volumeMounts:
             - name: spire-agent-socket
               mountPath: /run/spire/sockets
               readOnly: true
       hostAliases:
-        - ip: "10.11.19.67"
+        - ip: "10.11.19.213"
           hostnames:
             - "kafka"
       volumes:
