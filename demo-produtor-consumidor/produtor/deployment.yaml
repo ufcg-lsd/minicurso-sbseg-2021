@@ -35,6 +35,11 @@ spec:
             - name: spire-agent-socket
               mountPath: /run/spire/sockets
               readOnly: true
+          resources:
+            requests:
+              memory: "15M"
+            limits:
+              memory: "50M"
       hostAliases:
         - ip: "10.11.19.213"
           hostnames:
