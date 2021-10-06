@@ -32,6 +32,7 @@ spec:
           resources:
             limits:
               sgx.k8s.io/sgx: 1
+              memory: "1.2G"
       hostAliases:
         - ip: "10.11.19.213"
           hostnames:
