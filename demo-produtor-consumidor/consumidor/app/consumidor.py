@@ -14,7 +14,7 @@ def configure_kafka(topic, broker_addr, spiffe_ca, svid, svid_key, group_id):
     consumer_conf = {
         "auto_offset_reset": "earliest",
         "consumer_timeout_ms": 5000,
-        "enable_auto_commit": False,
+        "enable_auto_commit": True,
         "bootstrap_servers": broker_addr,
         "security_protocol": "SSL",
         "ssl_check_hostname": True,
@@ -32,9 +32,8 @@ if __name__ == '__main__':
     spiffe_ca = get_env_var("SPIFFE_CA")
     svid = get_env_var("SVID")
     svid_key = get_env_var("SVID_KEY")
-    group_id = get_env_var("GROUP_ID")
 
-    consumer = configure_kafka(topic, broker_addr, spiffe_ca, svid, svid_key, group_id)
+    consumer = configure_kafka(topic, broker_addr, spiffe_ca, svid, svid_key, None)
 
     consumed_msgs = 0
     try:
