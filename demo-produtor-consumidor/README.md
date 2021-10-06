@@ -5,9 +5,7 @@ Nesse momento, você já deve ter recebido dados de acesso à máquina virtual c
 Faça login na máquina via SSH.
 
 ```bash
-export USERNAME=<user> # substitua <user> pelo nome de usuário que você recebeu
-export CERTDIR=<cert-dir> # substitua <cert-dir> pelo caminho para o certificado que você recebeu
-ssh -i $CERTDIR $USERNAME@150.165.15.73
+ssh -o PreferredAuthentications=password <user>@150.165.15.73 # substitua <user> pelo nome de usuário que você recebeu
 ```
 
 ### Criar a identidade do produtor
