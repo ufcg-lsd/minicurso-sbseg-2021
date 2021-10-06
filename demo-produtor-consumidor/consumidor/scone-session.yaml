@@ -1,0 +1,45 @@
+name: $USERNAME/svid-session
+version: "0.3"
+
+services:
+  - name: consumidor-kafka
+    image_name: svid-image
+    mrenclaves: [43ed1f0b2cab051fb38868b496357cef2c521b50208585d85814d727b6f4a629]
+    command: python3 /app/consumidor.py
+    environment:
+      SCONE_HOST_PATH: "/etc/hosts"
+      SCONE_MODE: hw
+      SCONE_LOG: 7
+      SVID: /certs/svid.crt
+      SVID_KEY: /certs/svid.key
+      SPIFFE_CA: /certs/bundle.crt
+      BROKER_ADDR: kafka:9092
+      TOPIC: $USERNAME
+      GROUP_ID: "1"
+      PYTHONUNBUFFERED: 1
+ 
+secrets:
+  - name: svid
+    import:
+      session: $USERNAME/svid-session-plugin
+      secret: svid
+  - name: bundle
+    import:
+      session: spire-ca
+      secret: spire-ca
+
+images:
+  - name: svid-image
+    injection_files:
+      - path: /certs/svid.crt
+        content: |
+          $$SCONE::svid:crt$$$$SCONE::svid:chain$$
+      - path: /certs/svid.key
+        content: $$SCONE::svid:privatekey:pkcs8:pem$$
+      - path: /certs/bundle.crt
+        content: $$SCONE::bundle:crt$$
+
+security:
+  attestation:
+    tolerate: [debug-mode, hyperthreading, outdated-tcb, insecure-igpu, insecure-configuration]
+    ignore_advisories: "*"

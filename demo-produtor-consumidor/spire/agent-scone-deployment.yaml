@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spire-agent-scone
+  namespace: spire
+  labels:
+    app: spire-agent-scone
+spec:
+  selector:
+    matchLabels:
+      app: spire-agent-scone
+  template:
+    metadata:
+      namespace: spire
+      labels:
+        app: spire-agent-scone
+    spec:
+      hostPID: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      serviceAccountName: spire-agent-scone
+      nodeName: node-1
+      initContainers:
+        - name: init
+          # This is a small image with wait-for-it, choose whatever image
+          # you prefer that waits for a service to be up. This image is built
+          # from https://github.com/lqhl/wait-for-it
+          image: gcr.io/spiffe-io/wait-for-it
+          args: ["-t", "30", "spire-server:8081"]
+      containers:
+        - name: spire-agent-scone
+          image: silvamatteus/spire-agent:storesvid-scone
+          imagePullPolicy: IfNotPresent
+          args: ["-config", "/run/spire/config/agent.conf"]
+          volumeMounts:
+            - name: spire-config
+              mountPath: /run/spire/config
+              readOnly: true
+            - name: spire-bundle
+              mountPath: /run/spire/bundle
+            - name: run-spire-data
+              mountPath: /run/spire/data
+      volumes:
+        - name: spire-config
+          configMap:
+            name: spire-agent-scone
+        - name: spire-bundle
+          configMap:
+            name: spire-bundle
+        - name: run-spire-data
+          persistentVolumeClaim:
+            claimName: spire-agent-datadir

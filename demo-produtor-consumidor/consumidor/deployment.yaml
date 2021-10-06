@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumidor-kafka
+  labels:
+    app: consumidor-kafka
+spec:
+  selector:
+    matchLabels:
+      app: consumidor-kafka
+  template:
+    metadata:
+      labels:
+        app: consumidor-kafka
+    spec:
+      hostPID: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: consumidor-kafka
+          image: silvamatteus/consumer-kafka:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SCONE_CAS_ADDR
+              value: "5-4-0.scone-cas.cf"
+            - name: SCONE_CONFIG_ID
+              value: $USERNAME/svid-session/consumidor-kafka
+            - name: SCONE_LAS_ADDR
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          resources:
+            limits:
+              sgx.k8s.io/sgx: 1
+      hostAliases:
+        - ip: "10.11.19.213"
+          hostnames:
+            - "kafka"
