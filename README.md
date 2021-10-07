@@ -8,3 +8,4 @@ Resumo: A proposta deste minicurso é apresentar como aplicações nativas da nu
 
 - [Demonstração: produtor consumidor](https://github.com/ufcg-lsd/minicurso-sbseg-2021/blob/main/demo-produtor-consumidor/README.md)
 - [Demonstração: ghostunnel](https://github.com/ufcg-lsd/minicurso-sbseg-2021/blob/main/demo-ghostunnel/README.md)
+- [Demonstração: scone](https://github.com/ufcg-lsd/minicurso-sbseg-2021/blob/main/demo-scone/README.md)
