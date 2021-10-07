@@ -1,0 +1,17 @@
+name: sessao-exemplo
+version: 0.3
+services:
+    - name: alo-mundo
+      mrenclaves: [$MRENCLAVE]
+      command: python3 /app/programa.py
+      pwd: /
+      environment:
+          VARIAVEL_SECRETA: "conteudosecreto" 
+      fspf_path: /fspf-file/volume.fspf
+      fspf_key: $SCONE_FSPF_KEY
+      fspf_tag: $SCONE_FSPF_TAG
+
+security:
+    attestation:
+        tolerate: [debug-mode, hyperthreading, outdated-tcb]
+        ignore_advisories: "*"
